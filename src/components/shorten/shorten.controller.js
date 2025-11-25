@@ -1,7 +1,7 @@
 const shortenService = require('./shorten.service');
 const validUrl = require('valid-url');
 const { nanoid } = require('nanoid');
-const { ErrorHandler } = require('../../utils/errorHandler');
+const { AppError } = require('../../middleware/errorHandler');
 const config = require('../../config');
 
 const SHORTCODELENGTH = 6;
@@ -10,20 +10,20 @@ const createShortUrl = async (req, res, next) => {
     try {
         const { url } = req.body;
         if (!url) {
-            throw new ErrorHandler(
+            throw new AppError(
                 400,
                 'The url field is required. Please provide a valid URL to shorten.'
             );
         }
         if (!validUrl.isUri(url)) {
-            throw new ErrorHandler(
+            throw new AppError(
                 400,
                 'The provided URL is not a valid URI format. Please ensure it starts with http:// or https://'
             );
         }
 
         if (url.length > 2048) {
-            throw new ErrorHandler(
+            throw new AppError(
                 400,
                 'The provided URL exceeds the maximum allowed length of 2048 characters. Please provide a shorter URL.'
             );
@@ -54,7 +54,7 @@ const createShortUrl = async (req, res, next) => {
         }
 
         if (!shorterUrl) {
-            throw new ErrorHandler(
+            throw new AppError(
                 500,
                 'Failed to generate a unique short URL after multiple retries. Please try again later.'
             );
@@ -74,7 +74,7 @@ const redirectUrl = async (req, res, next) => {
     try {
         const shortCode = req.params.shortCode;
         if (shortCode.length !== SHORTCODELENGTH) {
-            throw new ErrorHandler(
+            throw new AppError(
                 400,
                 `invalid short code length. The short code must be exactly ${SHORTCODELENGTH} characters long.`
             );
@@ -84,7 +84,7 @@ const redirectUrl = async (req, res, next) => {
             deletedAt: null,
         });
         if (shorterUrl == null) {
-            throw new ErrorHandler(
+            throw new AppError(
                 404,
                 'The short URL you requested does not exist, has been deleted, or is invalid. Please check the short code and try again.'
             );
@@ -100,7 +100,7 @@ const getShortUrl = async (req, res, next) => {
     try {
         const shortCode = req.params.shortCode;
         if (shortCode.length !== SHORTCODELENGTH) {
-            throw new ErrorHandler(
+            throw new AppError(
                 400,
                 `invalid short code length. The short code must be exactly ${SHORTCODELENGTH} characters long.`
             );
@@ -111,7 +111,7 @@ const getShortUrl = async (req, res, next) => {
             deletedAt: null,
         });
         if (shorterUrl == null) {
-            throw new ErrorHandler(
+            throw new AppError(
                 404,
                 'The short URL you requested does not exist, has been deleted, or is invalid. Please check the short code and try again.'
             );
@@ -131,7 +131,7 @@ const deleteShortUrl = async (req, res, next) => {
     try {
         const shortCode = req.params.shortCode;
         if (shortCode.length !== SHORTCODELENGTH) {
-            throw new ErrorHandler(
+            throw new AppError(
                 400,
                 `invalid short code length. The short code must be exactly ${SHORTCODELENGTH} characters long.`
             );
@@ -142,7 +142,7 @@ const deleteShortUrl = async (req, res, next) => {
             { deletedAt: new Date() }
         );
         if (!shorterUrl) {
-            throw new ErrorHandler(
+            throw new AppError(
                 404,
                 'The short URL you are trying to delete does not exist or has already been deleted. Please verify the short code.'
             );

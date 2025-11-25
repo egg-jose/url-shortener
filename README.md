@@ -167,7 +167,6 @@ The application follows a layered architecture, separating concerns into distinc
 - **`src/components/[feature]/[feature].service.js`**: Contains the business logic for a specific feature, interacting with its model to perform operations.
 - **`src/components/[feature]/[feature].model.js`**: Defines the Mongoose schema for a specific feature's data and interacts directly with MongoDB.
 - **`src/middleware/errorHandler.js`**: Centralized error handling middleware.
-- **`src/utils/errorHandler.js`**: Custom error classes for consistent error responses.
 
 ## Database Schema Design
 
@@ -225,8 +224,6 @@ The project follows a modular file structure, organizing code by concern. Here's
     │   └── index.js                  # Central configuration file
     ├── middleware/                   # Express middleware functions
     │   └── errorHandler.js           # Global error handling middleware
-    └── utils/                        # Utility functions and helpers
-        └── errorHandler.js           # Custom error classes
 ```
 
 ## Architecture Decisions
